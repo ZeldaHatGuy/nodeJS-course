@@ -1,5 +1,5 @@
 {
-  "name": "test-app",
+  "name": "node-farm",
   "version": "1.0.0",
   "description": "testing",
   "main": "test.js",
@@ -13,6 +13,6 @@
     "slugify": "^1.6.5"
   },
   "devDependencies": {
-    "nodemon": "^2.0.19"
+    "nodemon": "^2.0.20"
   }
 }

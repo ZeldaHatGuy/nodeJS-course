@@ -11,6 +11,7 @@ server.on('request', (req,res) => {
     //     res.end(data);
     //  });
 
+    // solution 2
     // const readable = fs.createReadStream('test-file.txt')  
     // readable.on('data', chunk => {
     //     res.write(chunk);

@@ -1,76 +1,32 @@
-'use strict';
-const express = require('express');
+
+//Imports
 const fs = require('fs');
-const { toUSVString } = require('util');
-
+const express = require('express');
+const morgan = require('morgan');
 const app = express();
+const tourRouter = require('./routes/tourRoutes')
+const userRouter = require('./routes/userRoutes')
+
+//Middleware
 app.use(express.json());
-
-// app.get('/', (req, res) => {
-//     res
-//     .status(200)
-//     .json({message: 'Hello from the server side!', app: 'Natours'});
-// })
-
-// app.post('/', (req, res) => {
-//     res
-//     .send('You can post here')
-// })
-
-const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`))
-
-app.get('/api/v1/tours', (req, res) => {
-    res.status(200).json({
-        status: 'success',
-        results: tours.length,
-        data: {
-            tours
-        }
-    });
-});
-
-
-app.get('/api/v1/tours/:id', (req, res) => {
-    const id = req.params.id * 1;
-    const tour = tours.find(el => el.id == id);
-
-    if (!tour) {
-        return res.status(404).json({
-            status: "Failed",
-            message: "Invalid ID",
-        })
-    }
-    res.status(200).json({
-        status: 'success',
-         data: {
-             tour
-         }
-    });
-});
-
-app.post('/api/v1/tours', (req, res) => {
-    // console.log(req.body);
-    const newID = tours[tours.length-1].id +1;
-    const newTour = Object.assign({id: newID}, req.body);
-    tours.push(newTour);
-    fs.writeFile(`${__dirname}/dev-data/data/tours-simple.json`, JSON.stringify(tours), err => {
-        res.status(201).json({
-            status: 'success',
-            data: {
-                tour: newTour
-            }
-        })
-      }  
-    )
+app.use((req, res, next) => {
+    req.requestTime = new Date().toISOString();
+    next();
 })
 
-    
+app.use(morgan('dev'));
 
-const port = 3000
+// Mount our routers
+app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/users', userRouter);
 
-app.listen(port, () => {
-    console.log(`App running on port: ${port}`);
+
+//Start server on port 3000
+const port = 3000;
+app.listen( port, () => {
+    console.log(`App running on port ${port}`);
 });
+
 
 
 
