@@ -3,6 +3,9 @@ const fs = require('fs');
 const express = require('express');
 const morgan = require('morgan');
 
+const AppError = require('./utils/appError');
+const globalErrorHandler = require('./controllers/errorController');
+
 const app = express();
 const swaggerUi = require('swagger-ui-express');
 const tourRouter = require('./routes/tourRoutes');
@@ -28,4 +31,14 @@ app.use(express.static(`${__dirname}/public`));
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 
+app.all('*', (req, res, next) => {
+  // res.status(404).json({
+  //   status: 'Failed',
+  //   message: `No URL at ${req.originalURL} exists`,
+  // });
+  // next();
+
+  next(new AppError(`Cant find the specified URL: ${req.originalUrl}`, 404));
+});
+app.use(globalErrorHandler);
 module.exports = app;
