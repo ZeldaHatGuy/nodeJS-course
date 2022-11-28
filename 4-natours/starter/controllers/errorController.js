@@ -1,3 +1,4 @@
+const { TokenExpiredError } = require('jsonwebtoken');
 const AppError = require('../utils/appError'); // This class allows us to create error objects.
 
 //Support functions for mongoDB errors.
@@ -12,11 +13,15 @@ const handleDuplicateFieldsDB = (err) => {
 };
 
 const handleValidationErrorDB = (err) => {
-  const message = `You entered the wrong value for:${
-    err.message.split(':')[1]
-  }. ${err.message.split(':')[2]}`;
+  const errors = Object.values(err.errors).map((el) => el.message);
+  const message = ` Invalid input data. ${errors.join('. ')}`;
   return new AppError(message, 400);
 };
+const handleJsonWebTokenError = () =>
+  new AppError('Invalid Token. Please log in again', 401);
+
+const handleTokenExpiredError = () =>
+  new AppError('Your token has expired. Please log in again', 401);
 
 /* Control functions for the errors sent to the client based on environment.
 We don't want to send the entire stack to outside users in production
@@ -38,6 +43,7 @@ const sendErrorProd = (err, res) => {
       message: err.message,
     });
   } else {
+    console.error('ERROR', err);
     res.status(500).json({
       status: 'Failure',
       message: 'An unknown error has occurred',
@@ -58,6 +64,8 @@ module.exports = (err, req, res, next) => {
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
     if (error.name === 'ValidationError')
       error = handleValidationErrorDB(error);
+    if (error.name === 'JsonWebTokenError') error = handleJsonWebTokenError();
+    if (error.name === 'TokenExpiredError') error = handleTokenExpiredError();
 
     sendErrorProd(error, res);
   }

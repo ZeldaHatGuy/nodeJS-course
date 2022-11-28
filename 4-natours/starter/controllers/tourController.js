@@ -1,4 +1,3 @@
-const convertID = require('./helpers');
 const Tour = require('../models/tourModel');
 const APIFeatures = require('../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync');
@@ -83,13 +82,15 @@ exports.deleteTour = catchAsync(async (req, res, next) => {
 });
 
 exports.getTourStatus = catchAsync(async (req, res, next) => {
+  let groupBy = 'difficulty';
+  if (req.query.group_by) groupBy = req.query.group_by;
   const stats = await Tour.aggregate([
     {
       $match: { ratingsAverage: { $gte: 4.5 } },
     },
     {
       $group: {
-        _id: { $toUpper: '$difficulty' },
+        _id: { $toUpper: `$${groupBy}` },
         numTours: { $sum: 1 },
         numRatings: { $sum: '$ratingsQuantity' },
         avgRating: { $avg: '$ratingsAverage' },
@@ -107,6 +108,7 @@ exports.getTourStatus = catchAsync(async (req, res, next) => {
   ]);
   res.status(200).json({
     status: 'Success',
+    requestedAt: req.requestTime,
     data: {
       stats,
     },
