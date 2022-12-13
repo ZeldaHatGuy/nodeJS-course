@@ -15,7 +15,6 @@ const shutServer = (error, errType) => {
   console.warn('Shutting down server');
   process.exit();
 };
-//
 
 dotenv.config({ path: './config.env' });
 const app = require('./app');

@@ -31,7 +31,10 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 });
 
 exports.getTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id);
+  const features = new APIFeatures(Tour.findById(req.params.id), req.query)
+    .filter()
+    .limitFields();
+  const tour = await features.query;
 
   if (!tour) {
     return next(new AppError('No tour found with that ID', 404));
