@@ -17,27 +17,35 @@ const reviewSchema = new mongoose.Schema(
       type: Date,
       default: Date.now(),
     },
-    tour: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Tour',
-        required: [true, 'You must specify a tour you want to review'],
-      },
-    ],
+    tour: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Tour',
+      required: [true, 'You must specify a tour you want to review'],
+    },
 
-    author: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'User',
-        required: [true, 'You must provide a review author'],
-      },
-    ],
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: [true, 'You must provide a review author'],
+    },
   },
   {
-    toJSON: { virtuals: true },
+    toJSON: { virtuals: true },9
     toObject: { virtuals: true },
   }
 );
+
+reviewSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'user',
+    select: 'name photo',
+  });
+  // .populate({
+  //   path: 'tour',
+  //   select: 'name',
+  // });
+  next();
+});
 
 const Review = mongoose.model('Review', reviewSchema);
 
