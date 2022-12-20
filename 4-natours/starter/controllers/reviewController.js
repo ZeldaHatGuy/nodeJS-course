@@ -42,3 +42,4 @@ exports.deleteReview = factory.deleteOne(Review);
 exports.createReview = factory.createOne(Review);
 exports.getReview = factory.findOne(Review);
 exports.getAllReviews = factory.findAll(Review);
+exports.updateReview = factory.updateOne(Review);

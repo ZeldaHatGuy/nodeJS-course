@@ -5,23 +5,20 @@ const fs = require('fs');
 const reviewController = require('../controllers/reviewController');
 const authController = require('../controllers/authController');
 
+router.use(authController.protect);
+
 router
   .route('/')
-  .get(authController.protect, reviewController.getAllReviews)
-  .post(
-    authController.protect,
-    authController.restrictTo('user'),
-    reviewController.createReview
-  );
+  .get(reviewController.getAllReviews)
+  .post(authController.restrictTo('user'), reviewController.createReview);
 
 router
   .route('/:id')
-  .get(authController.protect, reviewController.getReview)
-  .delete(
-    authController.protect,
-    authController.restrictTo('admin'),
-    reviewController.deleteReview
-  )
-  .patch(reviewController.updateReview);
+  .get(reviewController.getReview)
+  .delete(authController.restrictTo('admin'), reviewController.deleteReview)
+  .patch(
+    authController.restrictTo('user', 'admin'),
+    reviewController.updateReview
+  );
 
 module.exports = router;

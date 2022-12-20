@@ -51,7 +51,8 @@ exports.findAll = (Model, filter = {}) =>
       .sort()
       .limitFields()
       .paginate();
-    const doc = await features.query;
+    // const doc = await features.query.explain();
+    const doc = await features.query.explain();
     if (!doc) {
       return next(new AppError('No documents found', 404));
     }
