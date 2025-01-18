@@ -1,6 +1,7 @@
-#Uploaded this to my github so I can pull it down either at home or work when I am working through this course.
 
-# Course Material and FAQ for my Complete Node.js, Express and MongoDB Bootcamp
+
+# Course Material and FAQ for my Complete Node.js, Express and MongoDB Bootcamp by Jonas Schmedtman on Udemy
+# I uploaded this to my repo so I can pull it down at home or at work when I am taking the course so I dont lose my progress
 
 This repo contains starter files and the finished project files for all the projects contained in the course (complete repo size is **288MB**).
 
